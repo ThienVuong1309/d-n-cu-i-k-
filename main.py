@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 import time
 import threading
+from Giaodiendangnhap import create_login_window1
 class CustomProgressBar(tk.Frame):
     def __init__(self, master=None, width=200, height=20, **kwargs):
         super().__init__(master, **kwargs)
@@ -188,7 +189,7 @@ if __name__ == "__main__":
     if is_logged_in():
         show_loading_screen()
     else:
-        create_login_window()
+        create_login_window1()
         if login_success:
             print("Đăng nhập thành công, chuyển sang giao diện chính / chờ 10s")
             show_loading_screen()
