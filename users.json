@@ -1,0 +1,17 @@
+{
+    "admin": {
+        "username": "admin",
+        "password": "123456",
+        "email": "hello@gmai.com"
+    },
+    "admin1": {
+        "username": "admin1",
+        "password": "123456",
+        "email": "1@gmail.com"
+    },
+    "admin2": {
+        "username": "admin2",
+        "password": "123456",
+        "email": "hello@gmail.com"
+    }
+}
