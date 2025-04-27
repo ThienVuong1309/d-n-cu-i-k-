@@ -52,6 +52,13 @@ def open_register():
 def forgot_password():
     root.withdraw()
     QuenMK.main()
+def back_main():
+    # Đóng cửa sổ hiện tại
+    root.destroy()
+    # Sau đó tạo một cửa sổ mới từ module Giaodiendangnhap
+    from Giaodiendangnhap import create_login_window1
+    create_login_window1()
+
 
 def create_login_window():
     global root, entry_username, entry_password
@@ -85,5 +92,7 @@ def create_login_window():
 
     btn_forgot = tk.Button(root, text="Quên mật khẩu?", font=("Arial", 8), fg="blue", borderwidth=0, command=forgot_password)
     btn_forgot.pack(pady=5, side="bottom")
+    btn_back = tk.Button(root, text="Quay lại", font=("Arial", 8), fg="blue", borderwidth=0, command=back_main)
+    btn_back.pack(pady=6, side="bottom")
 
     root.mainloop()
