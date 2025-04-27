@@ -3,6 +3,61 @@ import os
 from DangNhap import create_login_window, login_success
 import sqlite3
 from datetime import datetime
+import tkinter as tk
+from tkinter import messagebox
+import time
+import threading
+class CustomProgressBar(tk.Frame):
+    def __init__(self, master=None, width=200, height=20, **kwargs):
+        super().__init__(master, **kwargs)
+        
+        # Thiết lập kích thước và màu sắc cho thanh tiến trình
+        self.width = width
+        self.height = height
+        self.canvas = tk.Canvas(self, width=self.width, height=self.height, bg="white", highlightthickness=0)
+        self.canvas.pack()
+        
+        # Tạo một hình chữ nhật đại diện cho thanh tiến trình
+        self.progress = self.canvas.create_rectangle(0, 0, 0, self.height, fill="blue")
+
+
+        # Biến để theo dõi tiến trình hiện tại
+        self.current_progress = 0
+
+
+    def set_progress(self, value):
+        # Xác định độ dài của thanh tiến trình dựa trên giá trị đầu vào
+        width = self.width * (value / 100)
+        self.canvas.coords(self.progress, 0, 0, width, self.height)
+
+
+    def start_progress(self, duration):
+        # Đặt lại tiến trình hiện tại về 0
+        self.current_progress = 0
+        # Tính toán bước tiến trình
+        self.step = 100 / (duration * 340 / 100)  # mỗi 100ms sẽ tăng bao nhiêu %
+        self.update_progress()
+
+
+    def update_progress(self):
+        if self.current_progress < 100:
+            # Tăng tiến trình hiện tại và cập nhật giao diện
+            self.current_progress += self.step
+            self.set_progress(self.current_progress)
+            # Gọi lại hàm này sau 100ms
+            self.after(100, self.update_progress)
+        else:
+            self.set_progress(100)  # Đảm bảo thanh tiến trình đầy đủ 100%
+            self.close_and_open_main_window()  # Đóng cửa sổ loading và mở giao diện chính
+
+    def close_and_open_main_window(self):
+        # Đóng cửa sổ hiện tại
+        self.master.destroy()  # Hoặc self.destroy() nếu cần
+        # Mở giao diện chính
+        import Giaodienchinh
+        Giaodienchinh.open_main_window()
+
+
 
 def sync_json_to_db(json_path='events.json', db_path='events.db'):
     """ Cập nhật sự kiện từ JSON vào database nhưng không xóa sự kiện cũ """
@@ -111,17 +166,31 @@ def is_logged_in():
             return data.get("logged_in", False)
     return False
 
+def show_loading_screen():
+        # Tạo cửa sổ chính
+    root = tk.Tk()
+    root.title("QLSK")
+
+
+    # Tạo và hiển thị custom progress bar
+    progress_bar = CustomProgressBar(root)
+    progress_bar.pack(pady=20)
+    progress_bar.start_progress(10)
+
+
+    # Chạy vòng lặp chính của ứng dụng
+    root.mainloop()
+
 if __name__ == "__main__":
     convert_db_to_json()
     sync_json_to_db()
 
     if is_logged_in():
-        print("Đã đăng nhập rồi, vào thẳng giao diện chính / chờ 10s")
-        import Giaodienchinh
-        Giaodienchinh.open_main_window()
+        show_loading_screen()
     else:
         create_login_window()
         if login_success:
             print("Đăng nhập thành công, chuyển sang giao diện chính / chờ 10s")
+            show_loading_screen()
         else:
             print("Chưa đăng nhập hoặc bị sai tài khoản")
